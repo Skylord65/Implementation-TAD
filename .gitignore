@@ -20,3 +20,9 @@ save.txt
 skiplisttest
 TP4/Code/search.txt
 TP4/Code/construct.txt
+
+#TP5
+
+*.dot
+*.dot.pdf
+bstreetest
