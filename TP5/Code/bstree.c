@@ -208,69 +208,6 @@ void bstree_swap_nodes(ptrBinarySearchTree* tree, ptrBinarySearchTree from, ptrB
             }
         }
     }
-
-    // if(!bstree_empty(from->parent)) {
-    //     if(from->parent->left == from) {
-    //         from->parent->left = to;
-    //     } else {
-    //         from->parent->right = to;
-    //     }
-    // }
-
-    //void bstree_swap_nodes(ptrBinarySearchTree* tree, ptrBinarySearchTree from, ptrBinarySearchTree to) {
-    // assert(!bstree_empty(*tree) && !bstree_empty(from) && !bstree_empty(to));
-    
-    // ptrBinarySearchTree to_left   = to->left;
-    // ptrBinarySearchTree to_right  = to->right;
-    // ptrBinarySearchTree to_parent = to->parent;
-
-    // // to prend la position de from
-    // to->parent = from->parent;
-    // if (!bstree_empty(to->parent)) {
-    //     if (to->parent->left == from) {
-    //         to->parent->left = to;
-    //     } else {
-    //         to->parent->right = to;
-    //     }
-    // } else {
-    //     *tree = to;
-    // }
-
-    // if (from->left == to) {
-    //     to->left  = from;
-    //     to->right = from->right;
-    //     from->left  = to_left;
-    //     from->right = to_right;
-    //     from->parent = to;
-    //     if (!bstree_empty(to->right)) to->right->parent = to;
-    //     if (!bstree_empty(from->left))  from->left->parent  = from;
-    //     if (!bstree_empty(from->right)) from->right->parent = from;
-    // } else if (from->right == to) {
-    //     to->left  = from->left;
-    //     to->right = from;
-    //     from->left  = to_left;
-    //     from->right = to_right;
-    //     from->parent = to;
-    //     if (!bstree_empty(to->left)) to->left->parent = to;
-    //     if (!bstree_empty(from->right)) from->right->parent = from;
-    // } else {
-    //     to->left  = from->left;
-    //     to->right = from->right;
-    //     if (!bstree_empty(to->left))  to->left->parent  = to;
-    //     if (!bstree_empty(to->right)) to->right->parent = to;
-
-    //     from->left   = to_left;
-    //     from->right  = to_right;
-    //     from->parent = to_parent;
-    //     if (!bstree_empty(from->left))  from->left->parent  = from;
-    //     if (!bstree_empty(from->right)) from->right->parent = from;
-
-    //     if (!bstree_empty(to_parent)) {
-    //         if (to_parent->left == to) to_parent->left = from;
-    //         else                       to_parent->right = from;
-    //     }
-    // }
-    
 }
 
 // t -> the tree to remove from, current -> the node to remove
