@@ -575,19 +575,56 @@ BinarySearchTree* fixredblack_insert(BinarySearchTree* x) {
 }
 
 BinarySearchTree* fixredblack_remove_case1_left(BinarySearchTree* p){
-    if(bstree_empty(p->right)) return NULL;
-    rightrotate(p);
-    p->color = red;
-    p->right->color = black;
-    return fixredblack_remove(p, p->right);
+    BinarySearchTree* b = p->right;
+    if((b->left==NULL || b->left->color==black) && (b->right==NULL || b->right->color==black)) {
+        b->color = red;
+        if(p->color==red) {
+            p->color = black;
+            return p;
+        }
+            return fixredblack_remove(p->parent, p);
+    }
+    if(b->right!=NULL && b->right->color==red) {
+        b->color = p->color;
+        p->color = black;
+        b->right->color = black;
+        leftrotate(p);
+        return b;
+    }
+    if(b->left!=NULL && b->left->color==red) {
+        b->left->color = p->color;
+        p->color = red;
+        rightrotate(b);
+        return fixredblack_remove_case1_left(p);
+    }
+    return p;
 }
 
 BinarySearchTree* fixredblack_remove_case1_right(BinarySearchTree* p) {
-    if(bstree_empty(p->left)) return NULL;
-    rightrotate(p);
-    p->color = red;
-    p->left->color = black;
-    return fixredblack_remove(p, p->left);
+    BinarySearchTree* b = p->left;
+    if((b->right==NULL || b->right->color==black) && (b->left==NULL || b->left->color==black)) {
+        b->color = red;
+        if(p->color==red) {
+            p->color = black;
+            return p;
+        } else {
+            return fixredblack_remove(p->parent, p);
+        }
+    }
+    if(b->left!=NULL && b->right->color==red) {
+        b->color = p->color;
+        p->color = black;
+        b->left->color = black;
+        rightrotate(p);
+        return b;
+    }
+    if(b->right!=NULL && b->right->color==red) {
+        b->right->color = p->color;
+        p->color = red;
+        leftrotate(b);
+        return fixredblack_remove_case1_right(p);
+    }
+    return p;
 }
 
 BinarySearchTree* fixredblack_remove_case2_left(BinarySearchTree* p){
@@ -606,7 +643,21 @@ BinarySearchTree* fixredblack_remove_case2_right(BinarySearchTree* p) {
     return fixredblack_remove(p, p->left);
 }
 
+BinarySearchTree* fixredblack_remove_case2(BinarySearchTree* p, BinarySearchTree* x) {
+    if(p->left==x) {
+        return fixredblack_remove_case2_left(p);
+    } else {
+        return fixredblack_remove_case2_right(p);
+    }
+}
 
+BinarySearchTree* fixredblack_remove_case1(BinarySearchTree* p, BinarySearchTree* x) {
+    if(p->left==x) {
+        return fixredblack_remove_case1_left(p);
+    } else {
+        return fixredblack_remove_case1_right(p);
+    }
+}
 
 BinarySearchTree* fixredblack_remove(BinarySearchTree* p, BinarySearchTree* x) {
     if(bstree_empty(x)) return x;
