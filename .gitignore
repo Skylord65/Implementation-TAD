@@ -9,7 +9,6 @@ Makefile.txt
 # TP2
 
 evaluate
-base_code_lab2.*
 
 # TP3
 
@@ -26,3 +25,7 @@ TP4/Code/construct.txt
 *.dot
 *.dot.pdf
 bstreetest
+
+# Général
+
+html/
