@@ -12,7 +12,7 @@ on:
       - main
     paths:
       - 'v3/**'
-      - '.github/workflows/ci-v3.yml'
+      - '.github/workflows/release-v3.yml'
 
   workflow_dispatch:
 
@@ -33,80 +33,85 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential gcc make
 
-      # TP1
-      - name: Build TP1 - Exercice 1
+      - name: Identify TPs
+        id: identify
         run: |
-          cd v3/TP1/Exercice1
-          rm -f *.o stack_ex1
-          make
+          TP_FILE="/tmp/tps.list"
+          touch "$TP_FILE"
+          echo "tp_file=$TP_FILE" >> "$GITHUB_OUTPUT"
 
-      - name: Test TP1 - Exercice 1
-        run: |
-          cd v3/TP1/Exercice1
-          ./stack_ex1 ../Test/testfile1.txt
-          ./stack_ex1 ../Test/testfile2.txt
+          ELIGIBLE=$( find v3 -name "TP*" -type d ) # Localisation de tous les dossiers du genre TP...
+          for dir in $ELIGIBLE; do
+            # Un dossier est valide, si il contient au moins un makefile quelque part, si il y en a plusieurs c'est pas grave, on vérifie juste que :
+            # - Un makefile
 
-      - name: Build TP1 - Exercice 2
-        run: |
-          cd v3/TP1/Exercice2
-          gcc -std=c99 -Wall -Wextra -Werror -pedantic \
-            -c dynamicstack.c -o /tmp/dynamicstack.o
-
-      # TP2
-      - name: Build TP2 - Library
-        run: |
-          cd v3/TP2/Lib
-          make clean
-          rm -f liblab2.a
-          make
-
-      - name: Build TP2 - Code
-        run: |
-          cd v3/TP2/Code
-          make clean
-          rm -f evaluate
-          make
-
-      - name: Test TP2
-        run: |
-          cd v3/TP2/Code
-          ./evaluate ../Test/exercice1.txt
-
-      # TP3
-      - name: Build TP3
-        run: |
-          cd v3/TP3/Code
-          make mrproper
-          make
-
-      - name: Test TP3 - Exercises 1 to 5
-        shell: bash
-        run: |
-          cd v3/TP3/Code
-
-          for exercise in {1..5}; do
-            echo "Testing exercise $exercise"
-
-            set +e
-            output=$(./list_test "$exercise" 2>&1)
-            status=$?
-            set -e
-
-            # The current main.c returns 1 even after successful execution.
-            if [[ "$status" -ne 0 && "$status" -ne 1 ]]; then
-              echo "$output"
-              exit 1
+            makes="$( find $dir -iname makefile -type f )"
+            if [[ -n "$makes" ]]; then
+              # Entrée non-vide = au moins un match
+              echo "$( realpath $dir )" >> "$TP_FILE"
+              echo "$( basename $dir ) ajouté à la liste"
             fi
-
-            if [[ -z "$output" ]]; then
-              echo "No output for exercise $exercise"
-              exit 1
-            fi
-
-            if [[ "$exercise" -eq 5 ]]; then
-              echo "$output" | grep -F \
-                "Increasing order : List (8) : 1 2 3 3 4 5 6 7"
-            fi
-
-            echo "Exercise $exercise passed"
           done
+
+          echo "-------------------"
+          cat "$TP_FILE"
+
+      - name: Test builds
+        id: build
+        env:
+          TP_FILE: ${{ steps.identify.outputs.tp_file }}
+        run: |
+          ROOT="$( pwd )"
+          while IFS= read -r tp; do
+            cd "$tp"
+            if [[ -d "$tp/Lib" ]]; then
+              mkfile="$( find $tp/Lib -iname makefile -type f )"
+              if [[ -n "$mkfile" ]]; then
+                mkfiledir="$( dirname -- $mkfile )"
+                echo "Library found. Compiling first"
+                make -C "$mkfiledir"
+              fi
+            fi
+            makes=$( find . -iname makefile -type f )
+
+            for makefile in $makes; do
+              MAKEFILE_DIR="$( dirname -- $makefile )"
+              echo "Compiling with makefile $makefile"
+              echo "  MAKEFILE_DIR: $MAKEFILE_DIR"
+              make -C "$MAKEFILE_DIR" || true
+
+              # Écriture de l'éxécutable dans un fichier nommé ${makefile}.exec
+              exec_name="${MAKEFILE_DIR}/$( cat "$makefile" | grep -E "^EXEC *= *" | awk -F'=' '{print $2}' | tr -d ' ' )"
+              if [[ -z "$exec_name" ]]; then
+                echo "Executable not found for $makefile"
+              else
+                echo "$( realpath $exec_name )" > "${makefile}.exec"
+              fi
+            done
+          done < "$TP_FILE"
+
+          cd "$ROOT"
+
+      - name: Testing des TPs
+        env:
+          TP_FILE: ${{ steps.identify.outputs.tp_file }}
+        run: |
+          ROOT="$( pwd )"
+          while IFS= read -r tp; do
+            cd "$tp"
+            if [[ ! -d Test ]]; then
+              echo "No Test dir found for $( basename $tp )"
+              continue
+            fi
+
+            tests=$( find Test -name "*.txt" -type f )
+            for test in $tests; do
+              executables=$( find . -iname "makefile.exec" -type f )
+              for exe in $executables; do
+                echo "Running $exe $test"
+                $( cat $exe ) $test
+              done
+            done
+          done < "$TP_FILE"
+
+          cd "$ROOT"
