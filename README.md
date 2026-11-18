@@ -15,3 +15,7 @@ Implantation de la représentation équilibrée par arbres bicolore (_RedBlackTr
 # Répartition des versions
 
 Chaques TP est réparti avec 3 versions rangées dans leurs dossiers respectifs. La 3e version étant la plus complète et la plus propre.
+
+# Execution
+
+Chaques TP ayant ses propres tests et ses propres méthodes d'éxecutions un workflow a été mis en place pour tourner chaques codes et tests indépendemment dans une sorte de CI/CD avec Github Actions.
