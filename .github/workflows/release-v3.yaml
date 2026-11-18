@@ -24,7 +24,11 @@ jobs:
     name: Build and test V3
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
