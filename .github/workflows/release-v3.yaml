@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential gcc make
+          sudo apt-get install -y build-essential gcc make valgrind
 
       - name: Compilation TP1 Exercice 1
         run: |
@@ -42,8 +42,13 @@ jobs:
       - name: Execution TP1 Exercice 1
         run: |
           cd v3/TP1/Exercice1
-          ./stack_ex1 ../../Test/testfile1.txt
-          ./stack_ex1 ../../Test/testfile2.txt
+          ./stack_ex1 ../Test/testfile1.txt
+          ./stack_ex1 ../Test/testfile2.txt
+
+      - name: Execution TP1 Exercice 1 avec Valgrind
+          cd v3/TP1/Exercice2
+          valgrind ./stack_ex1 ../Test/testfile1.txt
+          valgrind ./stack_ex1 ../Test/testfile2.txt
 
       - name: Compilation TP1 Exercice 2
         run: |
@@ -54,8 +59,13 @@ jobs:
       - name: Execution TP1 Exercice 2
         run: |
           cd v3/TP1/Exercice2
-          ./stack_ex2 ../../Test/testfile1.txt
-          ./stack_ex2 ../../Test/testfile2.txt
+          ./stack_ex2 ../Test/testfile1.txt
+          ./stack_ex2 ../Test/testfile2.txt
+
+      - name: Execution TP1 Exercice 2 avec Valgrind
+          cd v3/TP1/Exercice2
+          valgrind ./stack_ex2 ../Test/testfile1.txt
+          valgrind ./stack_ex2 ../Test/testfile2.txt
 
       - name: Compilation TP2
         run: |
@@ -68,6 +78,11 @@ jobs:
           cd v3/TP2/Code
           ./evaluate ../Test/exercice1.txt
 
+      - name: Execution TP2 avec Valgrind
+        run: |
+          cd v3/TP2/Code
+          valgrind ./evaluate ../Test/exercice1.txt
+
       - name: Compilation TP3
         run: |
           cd v3/TP3/Code
@@ -75,7 +90,6 @@ jobs:
           make
 
       - name: Execution TP3
-        shell: bash
         run: |
           cd v3/TP3/Code
           ./list_test 1
@@ -83,3 +97,12 @@ jobs:
           ./list_test 3
           ./list_test 4
           ./list_test 5
+
+      - name: Execution TP3 avec Valgrind
+        run: |
+          cd v3/TP3/Code
+          valgrind ./list_test 1
+          valgrind ./list_test 2
+          valgrind ./list_test 3
+          valgrind ./list_test 4
+          valgrind ./list_test 5
