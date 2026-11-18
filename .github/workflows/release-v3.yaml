@@ -50,6 +50,7 @@ jobs:
           ./stack_ex1 ../Test/testfile2.txt
 
       - name: Execution TP1 Exercice 1 avec Valgrind
+        run: |
           cd v3/TP1/Exercice2
           valgrind ./stack_ex1 ../Test/testfile1.txt
           valgrind ./stack_ex1 ../Test/testfile2.txt
@@ -67,6 +68,7 @@ jobs:
           ./stack_ex2 ../Test/testfile2.txt
 
       - name: Execution TP1 Exercice 2 avec Valgrind
+        run: |
           cd v3/TP1/Exercice2
           valgrind ./stack_ex2 ../Test/testfile1.txt
           valgrind ./stack_ex2 ../Test/testfile2.txt
