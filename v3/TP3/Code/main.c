@@ -247,7 +247,7 @@ int main(int argc, char** argv){
 
 		list_delete(&l);
 	}
-	return 1;
+	return 0;
 }
 /** @} */
 
